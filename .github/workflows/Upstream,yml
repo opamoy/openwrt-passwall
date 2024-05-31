@@ -23,18 +23,23 @@ jobs:
         git remote add upstream https://github.com/xiaorouji/openwrt-passwall.git
         git fetch upstream
 
-    - name: Create a new branch for upstream changes
+    - name: Checkout luci-smartdns-dev branch
       run: |
-        git checkout -b xiaorouji-luci-smartdns-dev luci-smartdns-dev
-        git pull https://github.com/xiaorouji/openwrt-passwall.git luci-smartdns-dev
+        git checkout -b xiaorouji-luci-smartdns-dev origin/luci-smartdns-dev || git checkout luci-smartdns-dev
 
-    - name: Merge upstream changes into luci-smartdns-dev
+    - name: Merge upstream changes
       run: |
-        git checkout luci-smartdns-dev
-        git merge --no-ff xiaorouji-luci-smartdns-dev
+        git merge upstream/luci-smartdns-dev --allow-unrelated-histories || true
 
     - name: Push changes
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
-        git push https://${{ secrets.GH_PAT }}@github.com/opamoy/openwrt-passwall.git luci-smartdns-dev
+        git push https://${{ secrets.GH_PAT }}@github.com/opamoy/openwrt-passwall.git luci-smartdns-dev || true
+
+    - name: Handle merge conflicts
+      if: failure()
+      run: |
+        git merge --abort
+        echo "Automatic merge failed. Manual intervention required."
+        exit 1
