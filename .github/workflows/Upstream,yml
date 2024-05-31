@@ -1,4 +1,4 @@
-name: Sync with Upstream
+name: Upstream
 
 on:
   workflow_dispatch:  # 手动触发工作流
