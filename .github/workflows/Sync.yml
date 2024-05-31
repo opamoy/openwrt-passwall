@@ -33,6 +33,12 @@ jobs:
       run: |
         git merge upstream/luci-smartdns-dev --allow-unrelated-histories || true
 
+    - name: Pull latest changes from origin
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
+      run: |
+        git pull origin luci-smartdns-dev --allow-unrelated-histories || true
+
     - name: Push changes
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
