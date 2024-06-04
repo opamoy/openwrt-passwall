@@ -32,17 +32,21 @@ jobs:
     - name: Merge upstream changes
       id: merge
       run: |
-        git merge upstream/luci-smartdns-dev --allow-unrelated-histories || echo "Merge conflict"
+        if git merge upstream/luci-smartdns-dev --allow-unrelated-histories; then
+          echo "::set-output name=status::success"
+        else
+          echo "::set-output name=status::conflict"
+        fi
 
     - name: Handle Merge Conflicts
-      if: steps.merge.outputs.merge == 'Merge conflict'
+      if: steps.merge.outputs.status == 'conflict'
       run: |
         echo "Merge conflicts detected. Please resolve the conflicts manually."
         git status
         exit 1
 
     - name: Push changes
-      if: steps.merge.outputs.merge != 'Merge conflict'
+      if: steps.merge.outputs.status == 'success'
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
