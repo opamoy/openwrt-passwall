@@ -30,18 +30,19 @@ jobs:
         git checkout -b luci-smartdns-dev origin/luci-smartdns-dev || git checkout luci-smartdns-dev
 
     - name: Merge upstream changes
+      id: merge
       run: |
-        git merge upstream/luci-smartdns-dev --allow-unrelated-histories || true
+        git merge upstream/luci-smartdns-dev --allow-unrelated-histories || echo "Merge conflict"
 
     - name: Handle Merge Conflicts
-      if: failure() # 只在合并失败时运行此步骤
+      if: steps.merge.outputs.merge == 'Merge conflict'
       run: |
         echo "Merge conflicts detected. Please resolve the conflicts manually."
         git status
         exit 1
 
     - name: Push changes
-      if: success()
+      if: steps.merge.outputs.merge != 'Merge conflict'
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
