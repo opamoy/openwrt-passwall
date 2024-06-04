@@ -43,7 +43,15 @@ jobs:
       run: |
         echo "Merge conflicts detected. Please resolve the conflicts manually."
         git status
+        git diff > conflict_diff.txt
         exit 1
+
+    - name: Upload Merge Conflict Diff
+      if: steps.merge.outputs.status == 'conflict'
+      uses: actions/upload-artifact@v2
+      with:
+        name: conflict_diff
+        path: conflict_diff.txt
 
     - name: Push changes
       if: steps.merge.outputs.status == 'success'
