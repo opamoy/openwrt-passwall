@@ -211,7 +211,11 @@ end
 
 function index_status()
 	local e = {}
+<<<<<<< HEAD
 	local dns_shunt = ucic:get(appname, "@global[0]", "dns_shunt") or "dnsmasq"
+=======
+	local dns_shunt = uci:get(appname, "@global[0]", "dns_shunt") or "dnsmasq"
+>>>>>>> upstream/luci-smartdns-dev
 	if dns_shunt == "smartdns" then
 		e.dns_mode_status = luci.sys.call("pidof smartdns >/dev/null") == 0
 	else
